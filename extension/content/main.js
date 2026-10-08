@@ -25,8 +25,12 @@ html[data-veil-show-hidden] [data-veil-hidden] { outline: 2px dashed #ff3377 !im
   setStrength(V.DEFAULTS.strength);
 
   // Keep the page hidden until settings load so nothing private flashes on screen.
+  // If they're still not here after 1.5 s, fail closed: show the page under the blur cover.
   html.setAttribute('data-veil-loading', '');
-  setTimeout(() => html.removeAttribute('data-veil-loading'), 1500);
+  setTimeout(() => {
+    if (!s) { ui.veil.hidden = false; html.setAttribute('data-veil-cover', ''); }
+    html.removeAttribute('data-veil-loading');
+  }, 1500);
 
   // ---------- overlay: Present/away blur, lock screen, toast ----------
   const host = document.createElement('veil-root');

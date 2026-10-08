@@ -202,6 +202,25 @@ test('Veil end to end', async (t) => {
     await until(() => document.body.inert === false);
   });
 
+  await t.test('if settings are slow to load, the page stays covered instead of showing', async () => {
+    // Like a cold start after a Chrome restart: the page can't read the lock state until the busy worker answers.
+    await inExt(() => chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' }));
+    const busy = inExt(() => { const end = Date.now() + 4000; while (Date.now() < end); });
+    await sleep(200); // let the worker get busy first
+    const cold = watch(await ctx.newPage());
+    await cold.goto('https://chatgpt.com/c/lease-1');
+    await cold.waitForFunction(() => !document.documentElement.hasAttribute('data-veil-loading'), null, { timeout: 5000 });
+    const state = await cold.evaluate(() => ({
+      settingsLoaded: document.documentElement.hasAttribute('data-veil'),
+      covered: document.documentElement.hasAttribute('data-veil-cover'),
+    }));
+    assert.deepEqual(state, { settingsLoaded: false, covered: true });
+    await busy;
+    await cold.waitForFunction(() => document.body.inert === true, null, { timeout: 5000 }); // then the lock arrives
+    await cold.close();
+    await inExt(() => chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' }));
+  });
+
   await t.test('popup shows live status and changes settings', async () => {
     const { tabId } = await tellPage({ type: 'status' });
     const popup = watch(await ctx.newPage());
