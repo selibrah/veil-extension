@@ -63,6 +63,8 @@ $('leave').onclick = () => V.save({ blurOnLeave: !s.blurOnLeave });
 $('change-keys').onclick = () => chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
 
 chrome.storage.onChanged.addListener((changes, area) => {
+  // Lockdown or auto-lock: show the PIN gate again, or this page would keep showing hidden chats and PIN controls.
+  if (area === 'session' && changes.unlocked && !changes.unlocked.newValue && s && s.pinHash) return location.reload();
   if (area !== 'local' || !s) return;
   for (const k in changes) s[k] = changes[k].newValue ?? V.DEFAULTS[k];
   render();
@@ -82,7 +84,8 @@ function showContent() {
   s = await V.load();
   $('welcome').hidden = location.hash !== '#welcome';
   if (s.pinHash) {
-    $('gate-pin').append(pinInput(showContent));
+    // The right PIN here unlocks Veil, so a later lock changes `unlocked` and re-gates this page.
+    $('gate-pin').append(pinInput(() => { chrome.storage.session.set({ unlocked: true }); showContent(); }));
     $('gate').hidden = false;
   } else showContent();
 

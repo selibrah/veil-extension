@@ -225,6 +225,15 @@ test('Veil end to end', async (t) => {
     await opts.waitForFunction(() => document.querySelectorAll('#hidden-list .row').length === 1);
   });
 
+  await t.test('an open settings page asks for the PIN again after Lockdown or auto-lock', async () => {
+    const opts = ctx.pages().find((p) => p.url().includes('/options/options.html'));
+    // It was unlocked while the chat tab was locked; the lock below is what Lockdown and auto-lock write.
+    await inExt(() => chrome.storage.session.set({ unlocked: false, showHidden: false }));
+    await opts.waitForSelector('#gate:not([hidden]) input', { timeout: 5000 });
+    assert.equal(await opts.isVisible('#content'), false);
+    await opts.close();
+  });
+
   await t.test('no errors anywhere', () => assert.deepEqual(errors, []));
 
   await t.test('no network requests: only Veil\'s own files and the chat page itself', () => {
