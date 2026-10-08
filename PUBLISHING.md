@@ -126,7 +126,7 @@ BLUR EACH AREA SEPARATELY
 Chat list, conversation, input box and images each have their own switch. Adjust the strength, and hover over anything to peek at it.
 
 HIDE SPECIFIC CHATS
-Right-click any chat in the sidebar and choose "Hide this chat (Veil)", or hide the chat you have open from the Veil button. Add keywords to hide every chat whose title matches. With a PIN set, hidden chats come back only after you enter it.
+Right-click any chat in the sidebar and choose "Hide this chat (Veil)", or hide the chat you have open from the Veil button. Add keywords to hide every chat whose title matches. Hidden chats disappear from the sidebar list, and with a PIN set, showing them there again needs it. The site's own chat search, a direct link to the chat and Chrome's history can still show them.
 
 PIN LOCK AND AUTO-LOCK
 Press the Lockdown button or Alt+Shift+L. Veil locks again when your computer goes idle and every time Chrome restarts. Wrong guesses are slowed down.
