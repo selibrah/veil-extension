@@ -101,9 +101,9 @@ In the dashboard, **Analytics** shows installs and uninstalls, impressions and p
 
 ## 6. Decisions only you can make
 
-1. **The name.** At least six extensions already use "Veil", including a WhatsApp privacy one and Veilpage. Search isn't the problem because the store name carries the keywords. The risk is being hard to find by name and harder to get a domain. Options:
-   - Keep "Veil" and pick a domain like `getveil.app` or `veilchat.app`. Check availability first.
-   - Rename before launch, while it costs only a find-and-replace.
+1. **The name. Decide before the first upload.** A direct competitor already uses it: "Veil - AI Chat History Blur for ChatGPT, Claude, Gemini & Grok" by MidnightCoke (47 users, 4.8 stars from 5 ratings, v2.2.0, updated September 10, 2026; https://chromewebstore.google.com/detail/gldlgjaiemldondiieoahlblpmfalljo, read 2026-10-08). Same niche, same sites, same name: anyone who hears "Veil" in a post and searches the store can land on it, and a same-name listing invites an impersonation complaint. "Veil: Privacy Blur for WhatsApp Web" also exists, plus the namesakes in the sources. The name ships inside the package, so renaming after launch costs a new version, a review and any ratings and links built up by then. Options:
+   - **Rename now** (recommended by the 2026-10-08 audit). Change only user-visible strings: `manifest.json` name, short_name, action title; popup and settings page brand text; the lock card heading and update toast in `content/main.js`; "Hide this chat (Veil)" in `background.js` and the docs; the "VEIL" tile text in `store/make-assets.js` (then `npm run assets`); `site/`; `PUBLISHING.md`. Leave internal ids (`data-veil`, `VeilCore`, `veil-root`) alone. One unverified candidate from the audit: "Hushpane" (check store search, the domain and trademarks first; "Hush - private bookmarking" exists).
+   - **Keep "Veil".** The title already avoids the "Veil: Privacy Blur for X" pattern ("Veil: Blur and Lock ChatGPT, Claude and Gemini"). Pick a domain like `getveil.app` or `veilchat.app` after checking availability.
 2. **Domain or free subdomain.** `github.io` is fine to start. A custom domain (~$10–15/year) looks more trustworthy and keeps the article links if you change hosts.
 3. **Open source:** recommended, as noted above.
 4. **Building in public** under your own name on X or LinkedIn: weekly user numbers, what broke, what you shipped. This is the cheapest channel there is, and it compounds.

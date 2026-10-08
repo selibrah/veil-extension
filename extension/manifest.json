@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Veil: Privacy Blur for ChatGPT, Claude and Gemini",
+  "name": "Veil: Blur and Lock ChatGPT, Claude and Gemini",
   "short_name": "Veil",
   "version": "1.0.0",
   "description": "Blur your AI chats, hide private conversations, and lock ChatGPT, Claude and Gemini with a PIN. Nothing leaves your device.",
