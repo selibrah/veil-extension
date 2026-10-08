@@ -121,7 +121,7 @@ input:focus { background: #fff; border-color: #ff3377; }
       ui.lock.hidden = !isLocked;
       if (isLocked) {
         loadFonts();
-        ui.toast.hidden = true; // a "Hidden: <title>" toast must not sit on top of the lock screen
+        ui.toast.hidden = true; // no toast on top of the lock screen
         ui.pin.value = '';
         ui.err.textContent = '';
         setTimeout(() => ui.pin.focus());
@@ -238,7 +238,7 @@ input:focus { background: #fff; border-color: #ff3377; }
   async function hide(id, title) {
     const { hiddenChats } = await V.load();
     await V.save({ hiddenChats: { ...hiddenChats, [id]: title } });
-    toast(`Hidden: ${title || 'chat'}`);
+    toast('Chat hidden'); // never the title: this toast sits above the Present and step-away blur
   }
 
   function currentChat() {

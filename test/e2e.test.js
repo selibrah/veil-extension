@@ -44,6 +44,20 @@ test('Veil end to end', async (t) => {
     }
     return null;
   }, msg);
+  // Text of an element in Veil's closed shadow root: page scripts can't see in, the DevTools protocol can.
+  const overlayText = async (p, cls) => {
+    const cdp = await ctx.newCDPSession(p);
+    const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    await cdp.detach();
+    const find = (n) => {
+      const a = n.attributes || [];
+      for (let i = 0; i < a.length; i += 2) if (a[i] === 'class' && a[i + 1] === cls) return n;
+      for (const c of [...(n.children || []), ...(n.shadowRoots || [])]) { const hit = find(c); if (hit) return hit; }
+      return null;
+    };
+    const el = find(root);
+    return el && (el.children || []).map((c) => c.nodeValue).join('');
+  };
 
   await t.test('install opens the welcome page', async () => {
     const welcome = ctx.pages().find((p) => p.url().includes('options.html#welcome')) || (await ctx.waitForEvent('page'));
@@ -133,6 +147,23 @@ test('Veil end to end', async (t) => {
     await until(() => document.querySelector('a[href*="logo-7"]').hasAttribute('data-veil-hidden'));
     const { hiddenChats } = await inExt(() => chrome.storage.local.get('hiddenChats'));
     assert.equal(hiddenChats['logo-7'], 'Logo ideas for the bakery');
+  });
+
+  await t.test('the "chat hidden" toast never shows the title (it sits above the Present blur)', async () => {
+    await inExt(() => chrome.storage.local.set({ mode: 'present' }));
+    await until(() => document.documentElement.hasAttribute('data-veil-cover'));
+    await page.click('a[href="/c/doctor-5"]', { button: 'right' });
+    await inExt(async () => {
+      for (const tab of await chrome.tabs.query({})) chrome.tabs.sendMessage(tab.id, { type: 'hide-chat' }).catch(() => {});
+    });
+    await until(() => document.querySelector('a[href="/c/doctor-5"]').hasAttribute('data-veil-hidden'));
+    assert.equal(await overlayText(page, 'toast'), 'Chat hidden');
+    await inExt(async () => {
+      const { hiddenChats } = await chrome.storage.local.get('hiddenChats');
+      delete hiddenChats['doctor-5'];
+      await chrome.storage.local.set({ hiddenChats, mode: 'private' });
+    });
+    await until(() => document.documentElement.dataset.veil === 'side img' && !document.querySelector('a[href="/c/doctor-5"]').hasAttribute('data-veil-hidden'));
   });
 
   await t.test('"Show" brings hidden chats back temporarily', async () => {
