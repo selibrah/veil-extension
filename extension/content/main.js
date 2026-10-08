@@ -211,7 +211,7 @@ input:focus { background: #fff; border-color: #ff3377; }
   // While locked, keep keys away from the page: its shortcuts, typing, Enter on a link, Cmd/Ctrl+P.
   // Keys typed in the PIN box cross the shadow root too, so they stop here as well (the page's scripts
   // would otherwise see every PIN digit and run their shortcuts), and the PIN box is handled from here.
-  for (const type of ['keydown', 'keyup', 'keypress', 'beforeinput', 'input']) {
+  for (const type of ['keydown', 'keyup', 'keypress', 'beforeinput', 'textInput', 'input']) { // textInput: Chrome's own, also carries each digit
     addEventListener(type, (e) => {
       if (!locked()) return;
       e.stopImmediatePropagation();

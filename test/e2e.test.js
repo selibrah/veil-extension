@@ -201,7 +201,7 @@ test('Veil end to end', async (t) => {
     // Stands in for the site's own shortcuts and scripts (main world, so they run after Veil's listeners).
     await page.evaluate(() => {
       window.seen = [];
-      for (const type of ['keydown', 'keyup', 'keypress', 'beforeinput', 'input']) {
+      for (const type of ['keydown', 'keyup', 'keypress', 'beforeinput', 'textInput', 'input']) {
         addEventListener(type, (e) => window.seen.push(`${type}:${e.key ?? e.data}`), true);
         document.addEventListener(type, (e) => window.seen.push(`document ${type}:${e.key ?? e.data}`));
       }
