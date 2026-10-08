@@ -194,22 +194,30 @@ input:focus { background: #fff; border-color: #ff3377; }
     void ui.card.offsetWidth; // restart the animation
     ui.card.classList.add('shake');
   }
-  ui.pin.addEventListener('input', () => {
+  function onPinInput() {
     ui.pin.value = ui.pin.value.replace(/\D/g, '');
     ui.err.textContent = '';
     if (s && ui.pin.value.length === s.pinLength) tryPin();
-  });
-  ui.pin.addEventListener('keydown', (e) => {
+  }
+  function onPinKey(e) {
     if (e.key !== 'Enter') return;
     if (V.validPin(ui.pin.value)) tryPin();
     else ui.err.textContent = 'Enter your 4 to 8 digit PIN.';
-  });
+  }
   // While locked, keep keys away from the page: its shortcuts, typing, Enter on a link, Cmd/Ctrl+P.
-  addEventListener('keydown', (e) => {
-    if (!locked() || e.target === host) return;
-    e.stopImmediatePropagation();
-    if (e.key !== 'Tab') e.preventDefault(); // Tab can still reach the PIN box
-  }, true);
+  // Keys typed in the PIN box cross the shadow root too, so they stop here as well (the page's scripts
+  // would otherwise see every PIN digit and run their shortcuts), and the PIN box is handled from here.
+  for (const type of ['keydown', 'keyup', 'keypress', 'beforeinput', 'input']) {
+    addEventListener(type, (e) => {
+      if (!locked()) return;
+      e.stopImmediatePropagation();
+      if (e.target === host) {
+        if (type === 'keydown' && (e.ctrlKey || e.metaKey)) e.preventDefault(); // e.g. Cmd/Ctrl+S, +P, +C
+        if (type === 'keydown') onPinKey(e);
+        if (type === 'input') onPinInput();
+      } else if (type === 'keydown' && e.key !== 'Tab') e.preventDefault(); // Tab can still reach the PIN box
+    }, true);
+  }
 
   // ---------- blur when you leave ----------
   document.addEventListener('visibilitychange', () => {
