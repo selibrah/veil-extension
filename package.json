@@ -1,0 +1,15 @@
+{
+  "name": "veil-extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Veil: privacy blur for ChatGPT, Claude and Gemini (Chrome extension)",
+  "scripts": {
+    "test": "node --test test/core.test.js",
+    "test:e2e": "node --test test/e2e.test.js",
+    "zip": "rm -f veil.zip && cd extension && zip -rq ../veil.zip . -x '*.DS_Store'",
+    "assets": "SHOTS=.shots node --test test/e2e.test.js && node store/make-assets.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.57.0"
+  }
+}

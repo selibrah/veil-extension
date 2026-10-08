@@ -1,0 +1,6 @@
+node_modules/
+.shots/
+veil.zip
+.vercel/
+.env*
+.DS_Store

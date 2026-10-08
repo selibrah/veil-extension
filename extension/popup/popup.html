@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Veil</title>
+<link rel="stylesheet" href="../ui/theme.css">
+<style>
+  body { width: 340px; padding: 16px; background-color: #fff;
+    background-image: linear-gradient(#f4f4f5 1px, transparent 1px), linear-gradient(90deg, #f4f4f5 1px, transparent 1px); background-size: 16px 16px; }
+  header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 2.5px dashed var(--ink); }
+  .note { margin: 0 0 12px; padding: 8px 10px; font-size: 12px; background: #e0f2fe; border: 2px solid var(--ink); border-radius: 8px; }
+  .slider { display: block; }
+  .slider .top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .pinrow { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: -2px 0 8px; }
+  #shortcuts { margin-top: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#eye-off"/></svg></div>
+  <span class="brand">Veil</span>
+  <span class="pill" id="status">Loading</span>
+  <button class="icon-btn" id="settings" aria-label="Settings" title="Settings"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#settings"/></svg></button>
+</header>
+
+<main id="locked" hidden>
+  <div class="lockcard">
+    <div class="badge"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#lock"/></svg></div>
+    <h1 class="title">Veil locked!</h1>
+    <p class="hint">Enter your PIN to unlock all your AI tabs</p>
+    <div id="unlock"></div>
+  </div>
+</main>
+
+<main id="controls" hidden>
+  <p class="note" id="offsite" hidden>Open ChatGPT, Claude or Gemini to see Veil at work. Changes here apply to all three.</p>
+
+  <div class="seg" role="group" aria-label="Mode">
+    <button data-mode="off" title="Nothing blurred">Off</button>
+    <button data-mode="private" title="Blur chat list and images">Private</button>
+    <button data-mode="present" title="Blur the whole page">Present</button>
+    <button data-mode="custom" title="Your own mix">Custom</button>
+  </div>
+
+  <div class="label">Blur these areas</div>
+  <div class="row"><span class="stamp"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#list"/></svg></span><span class="grow" id="l-side">Chat list</span><button class="switch" role="switch" data-area="side" aria-labelledby="l-side"></button></div>
+  <div class="row"><span class="stamp"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#message"/></svg></span><span class="grow" id="l-conv">Conversation</span><button class="switch" role="switch" data-area="conv" aria-labelledby="l-conv"></button></div>
+  <div class="row"><span class="stamp"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#forms"/></svg></span><span class="grow" id="l-input">Input box</span><button class="switch" role="switch" data-area="input" aria-labelledby="l-input"></button></div>
+  <div class="row"><span class="stamp"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#photo"/></svg></span><span class="grow" id="l-img">Images</span><button class="switch" role="switch" data-area="img" aria-labelledby="l-img"></button></div>
+
+  <div class="row slider">
+    <div class="top"><span class="stamp"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#adjustments"/></svg></span><label class="grow" for="strength">Blur strength</label><span class="val" id="strength-val">6px</span></div>
+    <input type="range" id="strength" min="2" max="18" step="1">
+  </div>
+  <div class="row"><span class="stamp" style="background:#fef08a"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#pointer"/></svg></span><span class="grow" id="l-hover">Reveal on hover</span><button class="switch" role="switch" id="hover" aria-labelledby="l-hover"></button></div>
+
+  <div class="row"><span class="stamp" style="background:#fed7aa"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#eye-closed"/></svg></span><span class="grow" id="hidden-count">No hidden chats</span><button class="btn" id="show-hidden">Show</button></div>
+  <div class="pinrow" id="show-pin" hidden></div>
+  <div class="row" id="hide-open-row" hidden><span class="stamp"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#eye-off"/></svg></span><span class="grow">Hide the open chat</span><button class="btn quiet" id="hide-open">Hide</button></div>
+
+  <button class="big" id="lockdown"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#lock"/></svg>Lockdown</button>
+  <div class="kbd" id="shortcuts"></div>
+</main>
+
+<script src="../lib/core.js"></script>
+<script src="../ui/pin.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Veil: Privacy Blur for ChatGPT, Claude and Gemini",
+  "short_name": "Veil",
+  "version": "1.0.0",
+  "description": "Blur your AI chats, hide private conversations, and lock ChatGPT, Claude and Gemini with a PIN. Nothing leaves your device.",
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "action": {
+    "default_title": "Veil",
+    "default_popup": "popup/popup.html",
+    "default_icon": { "16": "icons/icon16.png", "32": "icons/icon32.png" }
+  },
+  "options_ui": { "page": "options/options.html", "open_in_tab": true },
+  "background": { "service_worker": "background.js" },
+  "permissions": ["storage", "idle", "contextMenus"],
+  "content_security_policy": { "extension_pages": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none'; connect-src 'none'; base-uri 'none'" },
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*", "https://claude.ai/*", "https://gemini.google.com/*"],
+      "js": ["lib/core.js", "content/sites.js", "content/main.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["fonts/Bangers.woff2", "fonts/PlusJakartaSans.woff2"],
+      "matches": ["https://chatgpt.com/*", "https://claude.ai/*", "https://gemini.google.com/*"]
+    }
+  ],
+  "commands": {
+    "panic": { "suggested_key": { "default": "Alt+Shift+B" }, "description": "Panic: blur everything (press again to undo)" },
+    "lock": { "suggested_key": { "default": "Alt+Shift+L" }, "description": "Lock now" },
+    "cycle": { "suggested_key": { "default": "Alt+Shift+M" }, "description": "Switch to the next mode" }
+  }
+}

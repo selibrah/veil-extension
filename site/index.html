@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veil – Blur, hide and lock your ChatGPT, Claude and Gemini chats</title>
+<meta name="description" content="Free Chrome extension that blurs your AI chat history, hides private chats and locks ChatGPT, Claude and Gemini with a PIN. Nothing leaves your device.">
+<link rel="canonical" href="https://veil-privacy-three.vercel.app/">
+<link rel="icon" href="favicon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Veil – keep your AI chats private">
+<meta property="og:description" content="Blur, hide and lock ChatGPT, Claude and Gemini. Free, no account, nothing leaves your device.">
+<meta property="og:url" content="https://veil-privacy-three.vercel.app/">
+<meta property="og:image" content="https://veil-privacy-three.vercel.app/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Veil","applicationCategory":"BrowserApplication","operatingSystem":"Chrome",
+ "description":"Blur your AI chats, hide private conversations, and lock ChatGPT, Claude and Gemini with a PIN. Nothing leaves your device.",
+ "url":"https://veil-privacy-three.vercel.app/","downloadUrl":"https://chromewebstore.google.com/detail/YOUR-ITEM-ID",
+ "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+</script>
+<style>
+@font-face { font-family: Bangers; src: url(fonts/Bangers.woff2) format('woff2'); font-display: swap; }
+@font-face { font-family: Jakarta; src: url(fonts/PlusJakartaSans.woff2) format('woff2'); font-weight: 500 800; font-display: swap; }
+:root {
+  --ink: #0c101a; --yellow: #fed130; --cyan: #19d3da; --magenta: #ff3377; --purple: #7952ff; --green: #05df72;
+  --muted: #475569; --paper: #fffdf5; --shadow: 6px 6px 0 var(--ink);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; overflow-x: clip; font: 500 17px/1.6 Jakarta, system-ui, sans-serif; color: var(--ink); background: var(--paper); }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+.wrap { width: min(1120px, 100% - 32px); margin-inline: auto; }
+.bangers, h1, h2, h3 { font-family: Bangers, Impact, sans-serif; font-weight: 400; letter-spacing: .03em; line-height: 1.05; margin: 0; }
+h2 { font-size: clamp(36px, 5vw, 56px); }
+h3 { font-size: 26px; }
+p { margin: 0; }
+.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.dots { background: radial-gradient(rgba(12,16,26,.13) 2px, transparent 2.5px) 0 0 / 22px 22px, var(--bg, var(--yellow)); }
+
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; font: 22px/1 Bangers, Impact, sans-serif; letter-spacing: .06em;
+  text-decoration: none; color: var(--ink); background: var(--magenta); border: 3px solid var(--ink); border-radius: 12px; box-shadow: var(--shadow);
+  transition: transform .12s, box-shadow .12s; }
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink); }
+.btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--ink); }
+.btn.alt { background: #fff; }
+.btn.small { padding: 9px 14px; font-size: 18px; box-shadow: 3px 3px 0 var(--ink); }
+
+/* header */
+header { padding: 18px 0; }
+header .wrap { display: flex; align-items: center; gap: 24px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 34px/1 Bangers, Impact, sans-serif; letter-spacing: .05em; }
+.brand img { width: 42px; height: 42px; }
+nav { display: flex; gap: 22px; margin-left: auto; font-weight: 700; }
+nav a { text-decoration: none; }
+nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 720px) { nav { display: none; } header .btn { margin-left: auto; } }
+
+/* hero */
+.hero { padding: 40px 0 80px; border-bottom: 4px solid var(--ink); }
+.hero .wrap { display: grid; gap: 48px; align-items: center; grid-template-columns: 1fr; }
+@media (min-width: 960px) { .hero .wrap { grid-template-columns: 1.1fr 1fr; } }
+.tag { display: inline-flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.tag span { padding: 4px 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; background: #fff;
+  border: 2.5px solid var(--ink); border-radius: 999px; box-shadow: 2px 2px 0 var(--ink); }
+.hero h1 { font-size: clamp(52px, 6.2vw, 80px); }
+.hero .lead { margin-top: 18px; max-width: 34ch; font-size: 20px; font-weight: 600; }
+.ctas { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 30px; }
+.fine { margin-top: 18px; font-size: 14px; font-weight: 700; color: #2a3140; }
+.art { position: relative; padding: 0 0 24px; }
+.frame { overflow: hidden; background: #fff; border: 4px solid var(--ink); border-radius: 16px; box-shadow: 10px 10px 0 var(--ink); }
+.frame img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; }
+.art .pop { position: absolute; right: -8px; bottom: -6px; width: 34%; transform: rotate(3deg); }
+.art .pop img { aspect-ratio: auto; }
+@media (max-width: 560px) { .art .pop { display: none; } }
+
+/* sections */
+section { padding: 88px 0; }
+.kicker { display: inline-block; margin-bottom: 12px; padding: 3px 10px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
+  background: var(--cyan); border: 2px solid var(--ink); border-radius: 6px; }
+.intro { max-width: 640px; margin-top: 14px; font-size: 19px; color: var(--muted); font-weight: 600; }
+
+.moments { padding: 26px 0; color: #fff; background: var(--ink); }
+.moments ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 30px; margin: 0; padding: 0; list-style: none; font: 24px/1.2 Bangers, Impact, sans-serif; letter-spacing: .05em; }
+.moments li::before { content: '★ '; color: var(--yellow); }
+
+.grid { display: grid; gap: 22px; margin-top: 44px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.card { padding: 24px; background: #fff; border: 3px solid var(--ink); border-radius: 14px; box-shadow: var(--shadow); }
+.card .badge { width: 46px; height: 46px; display: grid; place-items: center; margin-bottom: 14px; background: var(--yellow); border: 2.5px solid var(--ink); border-radius: 10px; }
+.card:nth-child(3n+2) .badge { background: var(--cyan); }
+.card:nth-child(3n) .badge { background: var(--magenta); }
+.card p { margin-top: 8px; color: var(--muted); font-weight: 600; }
+kbd { padding: 1px 6px; font: 700 14px ui-monospace, Menlo, monospace; background: #f1f5f9; border: 1.5px solid var(--ink); border-radius: 5px; }
+
+.show { display: grid; gap: 36px; align-items: center; margin-top: 72px; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .show { grid-template-columns: 1.2fr 1fr; } .show.flip > :first-child { order: 2; } }
+.show p { margin-top: 12px; font-size: 18px; color: var(--muted); font-weight: 600; }
+.show ul { margin: 14px 0 0; padding-left: 20px; font-weight: 700; }
+.show li { margin-top: 6px; }
+
+.privacy { color: #fff; background: var(--ink); }
+.privacy .intro { color: #cbd5e1; }
+.privacy .kicker { color: var(--ink); background: var(--green); }
+.checks { display: grid; gap: 16px; margin: 40px 0 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.checks li { display: flex; gap: 14px; padding: 18px 20px; font-weight: 600; background: #151a26; border: 2px solid #334155; border-radius: 12px; }
+.checks .i { color: var(--green); }
+.privacy .more { margin-top: 28px; color: #cbd5e1; }
+.privacy .more a { color: var(--yellow); }
+
+.steps { display: grid; gap: 22px; margin: 44px 0 0; padding: 0; list-style: none; counter-reset: s; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.steps li { position: relative; padding: 28px 22px 22px; font-weight: 700; background: #fff; border: 3px solid var(--ink); border-radius: 14px; box-shadow: var(--shadow); counter-increment: s; }
+.steps li::before { content: counter(s); position: absolute; top: -20px; left: 18px; width: 40px; height: 40px; display: grid; place-items: center;
+  font: 26px/1 Bangers, Impact, sans-serif; background: var(--yellow); border: 3px solid var(--ink); border-radius: 50%; }
+
+.faq details { max-width: 780px; }
+details { margin-top: 14px; background: #fff; border: 3px solid var(--ink); border-radius: 12px; box-shadow: 4px 4px 0 var(--ink); }
+summary { padding: 16px 20px; font-weight: 800; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: '+'; font: 800 24px/1 Jakarta, sans-serif; }
+details[open] summary::after { content: '–'; }
+details p { padding: 0 20px 18px; color: var(--muted); font-weight: 600; }
+
+.final { text-align: center; border-top: 4px solid var(--ink); border-bottom: 4px solid var(--ink); }
+.final h2 { font-size: clamp(42px, 7vw, 76px); }
+.final .ctas { justify-content: center; }
+
+footer { padding: 32px 0 48px; font-size: 14px; font-weight: 600; color: var(--muted); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; }
+footer .links { display: flex; gap: 18px; margin-left: auto; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="./"><img src="img/icon.png" alt="">Veil</a>
+    <nav aria-label="Main"><a href="#features">Features</a><a href="#privacy">Privacy</a><a href="#faq">FAQ</a></nav>
+    <a class="btn small" href="https://chromewebstore.google.com/detail/YOUR-ITEM-ID">Add to Chrome</a>
+  </div>
+</header>
+
+<main>
+  <div class="hero dots">
+    <div class="wrap">
+      <div>
+        <div class="tag"><span>Free</span><span>No account</span><span>Nothing leaves your device</span></div>
+        <h1>Use AI anywhere. Keep your chats private.</h1>
+        <p class="lead">Veil blurs, hides and locks ChatGPT, Claude and Gemini, so nobody reads your chats over your shoulder.</p>
+        <div class="ctas">
+          <a class="btn" href="https://chromewebstore.google.com/detail/YOUR-ITEM-ID">
+            <svg class="i" aria-hidden="true"><use href="img/icons.svg#plus"/></svg>Add to Chrome, it's free</a>
+          <a class="btn alt" href="#features">See what it does</a>
+        </div>
+        <p class="fine">Works on chatgpt.com, claude.ai and gemini.google.com, in Chrome, Edge, Brave and other Chromium browsers.</p>
+      </div>
+      <div class="art">
+        <div class="frame"><img src="img/private.png" width="1280" height="800" alt="An AI chat page with the chat list and images blurred by Veil"></div>
+        <div class="frame pop"><img src="img/popup.png" width="340" height="760" alt="Veil's toolbar popup with mode buttons and blur switches"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="moments" aria-label="When Veil helps">
+    <ul class="wrap"><li>At the office</li><li>Sharing your screen</li><li>On the train</li><li>Recording a tutorial</li><li>On a shared computer</li></ul>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <span class="kicker">Features</span>
+      <h2>Everything private, nothing in your way</h2>
+      <p class="intro">Veil starts working the moment you install it. Your chat list and images are blurred, and everything else is one click away.</p>
+      <div class="grid">
+        <div class="card"><div class="badge"><svg class="i" aria-hidden="true"><use href="img/icons.svg#adjustments"/></svg></div>
+          <h3>One-click modes</h3><p>Private, Present, Custom or Off. Switch from the toolbar or with <kbd>Alt+Shift+M</kbd>.</p></div>
+        <div class="card"><div class="badge"><svg class="i" aria-hidden="true"><use href="img/icons.svg#eye-off"/></svg></div>
+          <h3>Blur exactly what you want</h3><p>Chat list, conversation, input box and images each have their own switch. Hover over anything to peek.</p></div>
+        <div class="card"><div class="badge"><svg class="i" aria-hidden="true"><use href="img/icons.svg#eye-closed"/></svg></div>
+          <h3>Hide specific chats</h3><p>Right-click a chat to hide it, or hide every chat with a keyword like “salary” or “doctor”.</p></div>
+        <div class="card"><div class="badge"><svg class="i" aria-hidden="true"><use href="img/icons.svg#lock"/></svg></div>
+          <h3>PIN lock</h3><p>Lock the page with the Lockdown button or <kbd>Alt+Shift+L</kbd>. It locks again every time Chrome restarts.</p></div>
+        <div class="card"><div class="badge"><svg class="i" aria-hidden="true"><use href="img/icons.svg#clock"/></svg></div>
+          <h3>Covers up when you step away</h3><p>Switch tabs or leave your computer and Veil blurs or locks the page until you're back.</p></div>
+        <div class="card"><div class="badge"><svg class="i" aria-hidden="true"><use href="img/icons.svg#keyboard"/></svg></div>
+          <h3>Panic key</h3><p>Someone walks up? <kbd>Alt+Shift+B</kbd> blurs the whole page instantly. Press it again to bring it back.</p></div>
+      </div>
+
+      <div class="show">
+        <div class="frame"><img src="img/lock.png" width="1280" height="800" loading="lazy" alt="Veil lock screen asking for a PIN over a blurred chat"></div>
+        <div>
+          <h2>Lock it like your phone</h2>
+          <p>Set a 4 to 8 digit PIN and your AI chats stay behind it.</p>
+          <ul><li>Locks when your computer goes idle</li><li>Locks again after every restart</li><li>Slows down anyone guessing</li></ul>
+        </div>
+      </div>
+
+      <div class="show flip">
+        <div class="frame"><img src="img/options.png" width="1280" height="1512" loading="lazy" alt="Veil settings listing hidden chats and keywords"></div>
+        <div>
+          <h2>Some chats are nobody's business</h2>
+          <p>Hide a chat and it disappears from your sidebar on this computer. It's still in your account, just out of sight.</p>
+          <ul><li>Right-click any chat to hide it</li><li>Hide by keyword, automatically</li><li>Showing them again needs your PIN, if you've set one</li></ul>
+        </div>
+      </div>
+
+      <div class="show">
+        <div class="frame"><img src="img/present.png" width="1280" height="800" loading="lazy" alt="A chat page fully blurred by Veil's Present mode"></div>
+        <div>
+          <h2>Presenting? Blur it all</h2>
+          <p>Present mode blurs the entire page before you share your screen, join a call or hand over your laptop.</p>
+          <ul><li>One click, or <kbd>Alt+Shift+B</kbd></li><li>No hover peeking while it's on</li><li>Works even if the site changes its layout</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="privacy" class="privacy">
+    <div class="wrap">
+      <span class="kicker">Privacy</span>
+      <h2>Private by design, not by promise</h2>
+      <p class="intro">A privacy tool that ships your data to a server would be a bad joke. Veil doesn't have one.</p>
+      <ul class="checks">
+        <li><svg class="i" aria-hidden="true"><use href="img/icons.svg#shield-lock"/></svg>Makes zero network requests. No servers, no analytics, no account.</li>
+        <li><svg class="i" aria-hidden="true"><use href="img/icons.svg#eye"/></svg>Runs only on chatgpt.com, claude.ai and gemini.google.com. No other site.</li>
+        <li><svg class="i" aria-hidden="true"><use href="img/icons.svg#lock"/></svg>Your PIN is stored as a salted one-way hash, never as text.</li>
+        <li><svg class="i" aria-hidden="true"><use href="img/icons.svg#trash"/></svg>Remove Veil and everything it stored is gone with it.</li>
+      </ul>
+      <p class="more">Veil is a privacy screen: it changes what's shown on your computer and doesn't delete or encrypt your chats. Read the full <a href="privacy.html">privacy policy</a>.</p>
+    </div>
+  </section>
+
+  <section id="start">
+    <div class="wrap">
+      <span class="kicker">Get started</span>
+      <h2>Private in 30 seconds</h2>
+      <ol class="steps">
+        <li>Add Veil to Chrome from the Chrome Web Store. It's free.</li>
+        <li>Open ChatGPT, Claude or Gemini. Your chat list and images are already blurred.</li>
+        <li>Set a PIN in Veil's settings to turn on Lockdown and auto-lock.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap faq">
+      <span class="kicker">FAQ</span>
+      <h2>Questions</h2>
+      <details><summary>Is Veil really free?</summary><p>Yes. No account, no trial and no paid version.</p></details>
+      <details><summary>Can Veil read my chats?</summary><p>Veil runs inside your browser on the three chat sites so it can blur them, but it never saves or sends what you type or what the AI replies. It makes no network requests at all.</p></details>
+      <details><summary>Does hiding a chat delete it?</summary><p>No. It only stops the chat showing on this computer. It stays in your account, and you can unhide it any time from Veil's settings.</p></details>
+      <details><summary>What if I forget my PIN?</summary><p>Remove and reinstall Veil. That clears the PIN, along with your hidden-chat list and settings.</p></details>
+      <details><summary>Is the PIN lock secure?</summary><p>It stops people near your computer from reading your chats. It isn't encryption: anyone who can use your computer can still turn Veil off in Chrome's extension settings.</p></details>
+      <details><summary>Which browsers and apps does it work in?</summary><p>Chrome and other Chromium browsers that install from the Chrome Web Store, such as Edge and Brave. It works on the websites, whatever plan you're on, but not in the ChatGPT, Claude or Gemini desktop and mobile apps.</p></details>
+      <details><summary>Something isn't blurred. What now?</summary><p>The chat sites change their layout from time to time. When that happens the Veil button shows “Check layout”. <a href="mailto:YOUR-EMAIL@example.com">Email us</a> and we'll ship a fix.</p></details>
+    </div>
+  </section>
+
+  <section class="final dots" style="--bg: var(--yellow)">
+    <div class="wrap">
+      <h2>Your chats. Your screen. Your business.</h2>
+      <div class="ctas"><a class="btn" href="https://chromewebstore.google.com/detail/YOUR-ITEM-ID">Add Veil to Chrome, free</a></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Veil. Not affiliated with OpenAI, Anthropic or Google.</span>
+    <span class="links"><a href="privacy.html">Privacy policy</a><a href="mailto:YOUR-EMAIL@example.com">Contact</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

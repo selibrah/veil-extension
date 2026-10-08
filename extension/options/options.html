@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veil settings</title>
+<link rel="stylesheet" href="../ui/theme.css">
+<style>
+  body { min-height: 100vh; padding: 32px 16px 64px; background-color: #0f1423;
+    background-image: radial-gradient(#273252 16%, transparent 17%), radial-gradient(#1c253d 16%, transparent 17%);
+    background-size: 24px 24px; background-position: 0 0, 12px 12px; }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  .card { margin-bottom: 22px; padding: 18px 20px; background: #fff; border: 3px solid var(--ink); border-radius: 18px; box-shadow: 7px 7px 0 var(--ink); }
+  .top { display: flex; align-items: center; gap: 12px; }
+  h2 { margin: 0 0 4px; font: 22px/1.1 'Bangers', Impact, sans-serif; letter-spacing: .05em; }
+  p { margin: 0 0 12px; }
+  .welcome { background: var(--yellow); }
+  .list { display: grid; gap: 8px; }
+  .list .row { margin: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 4px 3px 10px; font-weight: 800; background: #e0f2fe;
+    border: 2px solid var(--ink); border-radius: 999px; box-shadow: 1.5px 1.5px 0 var(--ink); }
+  .chip button { width: 22px; height: 22px; display: grid; place-items: center; padding: 0; background: #fff; border: 1.5px solid var(--ink); border-radius: 50%; }
+  .chip .i { width: 12px; height: 12px; }
+  .inline { display: flex; gap: 8px; align-items: center; }
+  .inline .field { flex: 1; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  select.field { width: auto; }
+  .gate { text-align: center; }
+  .gate .pin { margin-top: 12px; }
+  @media (max-width: 480px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card top">
+    <div class="logo"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#eye-off"/></svg></div>
+    <span class="brand">Veil</span><span class="hint">Settings</span>
+  </div>
+
+  <section class="card welcome" id="welcome" hidden>
+    <h2>Veil is armed!</h2>
+    <p>Open ChatGPT, Claude or Gemini and click the Veil icon in your toolbar. Tip: pin it from the puzzle-piece menu so it's always one click away.</p>
+    <p><b>Already have one of them open? Reload that tab</b> so Veil can protect it.</p>
+    <p class="hint" style="margin:0">Want Lockdown and auto-lock? Set a PIN below.</p>
+  </section>
+
+  <section class="card gate" id="gate" hidden>
+    <div class="badge"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#lock"/></svg></div>
+    <h2>Enter your PIN</h2>
+    <p class="hint">Settings show your hidden chats, so they're behind your PIN.</p>
+    <div id="gate-pin"></div>
+  </section>
+
+  <div id="content" hidden>
+    <section class="card">
+      <h2>Hidden chats</h2>
+      <p class="hint">Right-click a chat in the sidebar and choose “Hide this chat (Veil)”, or use “Hide the open chat” in the popup.</p>
+      <div class="list" id="hidden-list"></div>
+    </section>
+
+    <section class="card">
+      <h2>Hide by keyword</h2>
+      <p class="hint">Any chat whose title contains one of these words is hidden automatically.</p>
+      <form class="inline" id="kw-form">
+        <input class="field" id="kw" maxlength="60" placeholder="salary" aria-label="Keyword">
+        <button class="btn" type="submit">Add</button>
+      </form>
+      <div class="chips" id="kw-list"></div>
+    </section>
+
+    <section class="card" id="pin">
+      <h2>PIN lock</h2>
+      <p class="hint" id="pin-state"></p>
+      <form id="pin-form">
+        <div class="grid2">
+          <input class="field" id="pin1" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password" placeholder="New PIN (4 to 8 digits)" aria-label="New PIN">
+          <input class="field" id="pin2" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password" placeholder="Type it again" aria-label="Confirm PIN">
+        </div>
+        <div class="inline">
+          <button class="btn" type="submit" id="pin-save">Set PIN</button>
+          <button class="btn quiet" type="button" id="pin-remove" hidden>Remove PIN</button>
+          <span class="err" id="pin-err" role="alert"></span>
+        </div>
+      </form>
+      <p class="hint" style="margin:12px 0 0">Forgot it? Remove and reinstall Veil. That also clears your hidden chat list.</p>
+      <p class="hint" style="margin:8px 0 0">The PIN is a privacy screen for people near your computer, not encryption. Anyone who can use this computer can still turn Veil off in Chrome's extension settings.</p>
+    </section>
+
+    <section class="card">
+      <h2>When you step away</h2>
+      <div class="row">
+        <span class="stamp"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#clock"/></svg></span>
+        <label class="grow" for="idle">After you're away for<br><span class="hint">Locks if you have a PIN, otherwise blurs</span></label>
+        <select class="field" id="idle">
+          <option value="0">Never</option>
+          <option value="1">1 minute</option>
+          <option value="5">5 minutes</option>
+          <option value="15">15 minutes</option>
+          <option value="30">30 minutes</option>
+        </select>
+      </div>
+      <div class="row">
+        <span class="stamp"><svg class="i" aria-hidden="true"><use href="../ui/icons.svg#eye"/></svg></span>
+        <span class="grow" id="l-leave">Blur when you switch tabs<br><span class="hint">Stays blurred until you move the mouse or press a key</span></span>
+        <button class="switch" role="switch" id="leave" aria-labelledby="l-leave"></button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Keyboard shortcuts</h2>
+      <div class="list" id="keys"></div>
+      <p style="margin:12px 0 0"><button class="btn quiet" id="change-keys">Change shortcuts</button></p>
+    </section>
+
+    <section class="card">
+      <h2>Privacy</h2>
+      <p style="margin:0">Veil keeps everything on this computer. No account, no server, no analytics. Your settings and hidden chat list never leave your browser.</p>
+      <p class="hint" style="margin:8px 0 0">Blur and hiding only change what's shown on this computer. Your chats still exist in your ChatGPT, Claude and Gemini accounts.</p>
+    </section>
+  </div>
+</div>
+<script src="../lib/core.js"></script>
+<script src="../ui/pin.js"></script>
+<script src="options.js"></script>
+</body>
+</html>
