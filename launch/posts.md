@@ -3,11 +3,12 @@
 Drafts only. Nothing here has been posted. Based on `GROWTH.md` (timeline, hooks, what not to do) and `docs/market-research.md` (what works on LinkedIn, HN and Reddit).
 
 **Before posting anything**
+- **Write the final text yourself.** These drafts were written by an AI agent, and Hacker News bans AI-written posts and comments outright: "Don't post generated text or AI-edited text" (https://news.ycombinator.com/newsguidelines.html, read 2026-10-08), so the Show HN section below is a list of facts, not a comment to paste. For X, LinkedIn and Reddit, use the drafts as notes and rewrite them in your own words.
 - Wait until the listing is live. Replace `STORE-LINK` with `https://chromewebstore.google.com/detail/YOUR-ITEM-ID` plus the channel's tag, e.g. `?utm_source=reddit&utm_medium=social&utm_campaign=launch`. Sources: `x`, `linkedin`, `reddit`, `hn`.
 - Site: `https://veil-privacy-three.vercel.app` (add `?utm_source=...` the same way).
-- `REPO-LINK` only exists if you open-source the code (recommended in `GROWTH.md`). Without it, skip Show HN and drop the repo lines.
+- `REPO-LINK` only exists if you open-source the code (recommended in `GROWTH.md` so people can check the no-network claim; HN doesn't require it). Publish a fresh repo, not this one: this repo's history holds `GROWTH.md`, `launch/`, `docs/market-research.md` and the agent reports. Copy in only `extension/`, `test/`, `store/`, `site/`, `docs/spec.md`, `package.json`, `package-lock.json`, `README.md` and a `LICENSE` you choose, and check the commit author email before the first push. Without a repo, drop the repo lines and link the store listing on Show HN.
 - Record the panic-key clip and GIF with a demo account and fake chats. Never show real chats.
-- Every claim below is true today. Keep it that way: no "encrypted", "unhackable" or "100% secure".
+- No "encrypted", "unhackable" or "100% secure". A few lines in the X, LinkedIn and Reddit drafts still overstate what the test proves or describe effort as yours; `AUDIT-PASS-2026-10-08.md` (veil-claims-03, -04) lists them. Fix them when you rewrite.
 - The openers are generic on purpose. If a real moment made you build Veil, open with that instead: a true story beats a generic hook, and an invented one gets caught.
 
 ---
@@ -90,7 +91,7 @@ Follow-ups (2–3 a week, same topic so the feed learns who to show you to): wha
 
 ## r/chrome_extensions (~day 2)
 
-Read the sidebar rules first. If self-promotion goes in a weekly thread, post there instead.
+Notes for your own post, not text to paste (see "Before posting anything"). Read the sidebar rules first. If self-promotion goes in a weekly thread, post there instead.
 
 **Title**
 ```
@@ -124,6 +125,8 @@ Feedback welcome, especially if a site's layout breaks it.
 
 ## r/SideProject (~day 2)
 
+Notes for your own post, not text to paste (see "Before posting anything").
+
 **Title**
 ```
 Your ChatGPT sidebar shows up in every screen share, so I built a free extension that blurs and PIN-locks it
@@ -151,30 +154,23 @@ Happy to answer anything about building and publishing an MV3 extension.
 
 ---
 
-## Show HN (~day 5, only if the code is public)
+## Show HN (~day 5)
 
-Link the **repo** (REPO-LINK), not the landing page. HN wants something people can try without signing up.
+Link the **repo** (REPO-LINK) if the code is public, otherwise the store listing. Not the landing page: Show HN is for "something you've made that other people can play with" and says "Don't post landing pages" (https://news.ycombinator.com/showhn.html, read 2026-10-08). HN bans generated text, so write the title and the first comment yourself, in your own words, and post the comment right after submitting.
 
-**Title** (73 characters, limit 80)
-```
-Show HN: Veil – Blur and PIN-lock ChatGPT, Claude and Gemini, fully local
-```
+**Title** (limit 80 characters; reword it yourself). Current idea: `Show HN: Veil – Blur and PIN-lock ChatGPT, Claude and Gemini, fully local`
 
-**First comment** (post right after submitting, then stay in the thread all day)
-```
-Hi HN, I built Veil because AI chat history shows up whenever you share your screen, and the chat titles alone say a lot.
-
-It's a Manifest V3 extension that runs only on chatgpt.com, claude.ai and gemini.google.com:
-
-- Blur is plain CSS: html[data-veil~="side"] :is(<site selectors>) { filter: blur() }. :is() means one stale selector doesn't drop the whole rule. Present mode and the lock screen use a fixed backdrop-filter layer, so they work even when a site redesign breaks the selectors.
-- The overlay lives in a closed shadow root. While locked, the page underneath is made inert, keys are swallowed, the tab title is masked and printing comes out blank. After an update, tabs still running the old copy cover themselves until reloaded.
-- The PIN is PBKDF2-SHA256 (200k iterations, random salt), with a 30 s wait after 5 wrong tries. Unlock state is in chrome.storage.session, which Chrome wipes on restart; that wipe is what re-locks it.
-- No network requests: the popup, settings page and service worker run under a CSP with connect-src 'none' (content scripts run under the site's own CSP, so the test is what covers them). The Playwright e2e test records every request from the page, popup, settings and service worker and fails on anything that isn't the extension's own files.
-
-What it isn't: encryption. It's a privacy screen. Anyone with access to chrome://extensions can turn it off, and your chats stay in your account as usual.
-
-Permissions are storage, idle and contextMenus. Feedback on the threat model and the selector approach is very welcome.
-```
+**Facts to draw on** (true of the code today; write the comment yourself, HN bans generated text)
+- Why you built it: only you can say. Leave it out rather than borrow a reason.
+- Manifest V3. Runs only on chatgpt.com, claude.ai and gemini.google.com. Permissions: `storage`, `idle`, `contextMenus`.
+- Blur is plain CSS: `html[data-veil~="side"] :is(<site selectors>) { filter: blur() }`. `:is()` takes a forgiving selector list, so one invalid selector doesn't drop the whole rule.
+- Present mode and the lock screen use a fixed `backdrop-filter` layer, not the site selectors, so they keep working when a redesign breaks the selectors.
+- The overlay lives in a closed shadow root. While locked: the page is `inert`, keys are stopped before the page's scripts see them (including the PIN typed into the lock box), the tab title is masked and printing comes out blank.
+- After an update, tabs still running the old copy cover themselves until reloaded. If settings take more than 1.5 s to load, the page stays covered.
+- PIN: PBKDF2-SHA256, 200k iterations, random salt; a 30 s wait after 5 wrong tries. Unlock state is in `chrome.storage.session`, which Chrome wipes on restart; that wipe is what re-locks it.
+- PIN limits: the hash only slows guessing at the lock screen. Anyone who can read the Chrome profile can brute-force a 4–8 digit PIN offline (the stored PIN length tells them how many digits), and the lockout trusts the system clock.
+- No network requests: the popup, settings page and service worker run under a CSP with `connect-src 'none'`. Content scripts run under the site's own CSP, so the Playwright e2e test covers them: it records every request from the page, popup, settings and service worker during a full run against a stand-in chatgpt.com page and fails on anything that isn't the extension's own files. There's no CI, so it runs when someone runs it.
+- What it isn't: encryption. It's a privacy screen. Anyone with access to `chrome://extensions` can turn it off, and the chats stay in the account as usual.
 
 ---
 
